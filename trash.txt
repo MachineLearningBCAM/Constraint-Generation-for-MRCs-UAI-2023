@@ -1,0 +1,26 @@
+
+
+Number of iterations: 200
+Shape: (56, 560)
+Len support smoothing: 492
+Number violated constraints: 1
+Convergence rate    : 0.005
+Time smoothing: 0.112
+
+Number of iterations              : 1
+Total time smoothing for hinge: 0.112
+Size of model: [56, 492]
+Round 1
+Number of columns added: 159
+Round 2
+Number of columns added: 1
+Round 3
+
+TIME CG = 0.3698859214782715
+
+Obj value   = 2.1808731563184214
+Len support = 32
+b0   = 0.43728185599144825
+
+Number violated constraints =  19
+Len support dual = 33
