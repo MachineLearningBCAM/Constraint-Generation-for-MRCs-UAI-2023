@@ -54,8 +54,8 @@ def load_Colon(return_X_y=False):
 	"""
 	module_path = dirname(__file__)
 
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		with open(zObject.extract('data/colon.csv')) as csv_file:
+	with zipfile.ZipFile(join(module_path, 'colon.csv.zip')) as zObject:
+		with open(zObject.extract('colon.csv')) as csv_file:
 			data_file = csv.reader(csv_file)
 			n_samples = 62
 			n_features = 2000
@@ -106,8 +106,8 @@ def load_Leukemia(return_X_y=False):
 	"""
 	module_path = dirname(__file__)
 
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		with open(zObject.extract('data/leukemia.csv')) as csv_file:
+	with zipfile.ZipFile(join(module_path, 'leukemia.csv.zip')) as zObject:
+		with open(zObject.extract('leukemia.csv')) as csv_file:
 			data_file = csv.reader(csv_file)
 			n_samples = 72
 			n_features = 7129
@@ -158,8 +158,8 @@ def load_Arcene(return_X_y=False):
 	"""
 	module_path = dirname(__file__)
 
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		with open(zObject.extract('data/arcene.csv')) as csv_file:
+	with zipfile.ZipFile(join(module_path, 'arcene.csv.zip')) as zObject:
+		with open(zObject.extract('arcene.csv')) as csv_file:
 			data_file = csv.reader(csv_file)
 			n_samples = 200
 			n_features = 10001
@@ -210,8 +210,8 @@ def load_Ovarian(return_X_y=False):
 	"""
 	module_path = dirname(__file__)
 
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		with open(zObject.extract('data/ovarian.csv')) as csv_file:
+	with zipfile.ZipFile(join(module_path, 'ovarian.csv.zip')) as zObject:
+		with open(zObject.extract('ovarian.csv')) as csv_file:
 			data_file = csv.reader(csv_file)
 			n_samples = 253
 			n_features = 15154
@@ -263,8 +263,8 @@ def load_Dorothea(return_X_y=False):
 	"""
 	module_path = dirname(__file__)
 
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		with open(zObject.extract('data/dorothea.csv')) as csv_file:
+	with zipfile.ZipFile(join(module_path, 'dorothea.csv.zip')) as zObject:
+		with open(zObject.extract('dorothea.csv')) as csv_file:
 			data_file = csv.reader(csv_file)
 			n_samples = 1150
 			n_features = 100000
@@ -316,8 +316,8 @@ def load_MLL(return_X_y=False):
 	"""
 	module_path = dirname(__file__)
 
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		with open(zObject.extract('data/MLL.csv')) as csv_file:
+	with zipfile.ZipFile(join(module_path, 'MLL.csv.zip')) as zObject:
+		with open(zObject.extract('MLL.csv')) as csv_file:
 			data_file = csv.reader(csv_file)
 			ids = next(data_file)
 			n_samples = 72
@@ -347,8 +347,8 @@ def load_MLL(return_X_y=False):
 
 def load_Prostate_GE(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/Prostate_GE.mat'))
+	with zipfile.ZipFile(join(module_path, 'Prostate_GE.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('Prostate_GE.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
@@ -357,8 +357,8 @@ def load_Prostate_GE(return_X_y=False):
 
 def load_GLI_85(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/GLI_85.mat'))
+	with zipfile.ZipFile(join(module_path, 'GLI_85.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('GLI_85.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
@@ -368,8 +368,8 @@ def load_GLI_85(return_X_y=False):
 
 def load_SMK_CAN_187(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/SMK_CAN_187.mat'))
+	with zipfile.ZipFile(join(module_path, 'SMK_CAN_187.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('SMK_CAN_187.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
@@ -378,8 +378,8 @@ def load_SMK_CAN_187(return_X_y=False):
 
 def load_T0X_171(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/TOX_171.mat'))
+	with zipfile.ZipFile(join(module_path, 'TOX_171.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('TOX_171.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
@@ -388,8 +388,8 @@ def load_T0X_171(return_X_y=False):
 
 def load_Lung(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/lung.mat'))
+	with zipfile.ZipFile(join(module_path, 'lung.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('lung.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
@@ -398,8 +398,8 @@ def load_Lung(return_X_y=False):
 
 def load_GLIOMA(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/GLIOMA.mat'))
+	with zipfile.ZipFile(join(module_path, 'GLIOMA.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('GLIOMA.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
@@ -408,8 +408,8 @@ def load_GLIOMA(return_X_y=False):
 
 def load_CLL_SUB_111(return_X_y=False):
 	module_path = dirname(__file__)
-	with zipfile.ZipFile(join(module_path, 'data.zip')) as zObject:
-		mat = scipy.io.loadmat(zObject.extract('data/CLL_SUB_111.mat'))
+	with zipfile.ZipFile(join(module_path, 'CLL_SUB_111.mat.zip')) as zObject:
+		mat = scipy.io.loadmat(zObject.extract('CLL_SUB_111.mat'))
 		X = np.asarray(mat['X'])
 		y = np.asarray(mat['Y'])
 		y = np.asarray([i[0] for i in y])
