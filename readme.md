@@ -52,7 +52,7 @@ MLL | 12582 | 72 | 3
 Ovarian | 15154 | 253 | 2
 Prostate_GE | 5966 | 102 | 2
 SMK_CAN_187 | 19993 | 187 | 2
-tox_171 | 5748 | 171 | 4
+TOX_171 | 5748 | 171 | 4
 
 The datasets are available as zip files in this repository in the `Datasets` folder with functions to easily load them an numpy matrices in `load.py`.
 
@@ -90,11 +90,12 @@ The proposed algorithm is also implemented in the MRCpy library which can be ins
 ```
 from MRCpy import MRC
 
-mrc_classif = MRC(loss = '0-1, 
-solver = 'cg',
-n_max = 100,
-k_max = 20,
-eps = 1e-4).fit(X,y)
+# fitting
+mrc_classif = MRC(loss = '0-1, solver = 'cg', n_max = 100, k_max = 20, eps = 1e-4)
+mrc_classif.fit(X,y)
+
+# prediction
+predicted_labels = mrc_classif.predict(X)
 ```
 
 For further details, please check out the documentation of the library in [here](https://machinelearningbcam.github.io/MRCpy/)
