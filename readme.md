@@ -8,7 +8,15 @@ The algorithm proposed in the paper provides efficient learning for 0-1 minimax 
 
 ### Decreasing worst-case errors
 
-<img src="decreasing_worst_case_error.png" width="600" height="500"/>
+<img src="decreasing_worst_case_error.png" width="625" height="500"/>
+
+### Scalability
+
+<img src="scalability.png" width="625" height="500"/>
+
+### Worst-case errors and training times using multiple high-dimensional datasets
+
+<img src="worst_case_errors.png" width="625" height="500"/>
 
 ## Requirements
 
