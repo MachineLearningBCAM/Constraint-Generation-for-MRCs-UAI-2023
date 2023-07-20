@@ -8,7 +8,7 @@ The algorithm proposed in the paper provides efficient learning for 0-1 minimax 
 
 ### Decreasing worst-case errors
 
-<img src="decreasing_worst_case_error.eps" width="500" height="500"/>
+<img src="arcene.eps" width="500" height="500"/>
 
 ## Requirements
 
