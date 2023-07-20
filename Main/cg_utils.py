@@ -2,7 +2,7 @@ import gurobipy as gp
 from gurobipy import GRB
 import numpy as np
 
-def select(MRC_model, M, tau_, lambda_, I, alpha, eps, n_max):
+def select(MRC_model, F, tau_, lambda_, I, alpha, eps, n_max):
 
 	"""
 	Function to update existing MRC model by adding new feature (variable).
@@ -12,7 +12,7 @@ def select(MRC_model, M, tau_, lambda_, I, alpha, eps, n_max):
 	MRC_model : A MOSEK model object
 		MRC model to be updated.
 
-	M : `array`-like
+	F : `array`-like
 		A vector of coefficients to update the constraint matrix.
 
 	tau_ : `array`-like of shape (no_of_features)
@@ -43,9 +43,9 @@ def select(MRC_model, M, tau_, lambda_, I, alpha, eps, n_max):
 
 	"""
 
-	I_c = list(set(np.arange(M.shape[1])) - set(I))
+	I_c = list(set(np.arange(F.shape[1])) - set(I))
 	J = I.copy()
-	m = M.transpose() @ alpha
+	m = F.transpose() @ alpha
 
 	# Violations in the constraint.
 	v = np.maximum((m[I_c] - tau_[I_c] - lambda_[I_c]), 0.) + np.maximum((tau_[I_c] - lambda_[I_c] - m[I_c]), 0.)
@@ -77,7 +77,7 @@ def select(MRC_model, M, tau_, lambda_, I, alpha, eps, n_max):
 			if v[i] > eps:
 				J.append(I_c[i])
 				j = j + 1
-				MRC_model = add_var(MRC_model, M, tau_, lambda_, I_c[i])
+				MRC_model = add_var(MRC_model, F, tau_, lambda_, I_c[i])
 				k = k + 1
 			i = i + 1
 
@@ -86,23 +86,49 @@ def select(MRC_model, M, tau_, lambda_, I, alpha, eps, n_max):
 		for i in range(n_max):
 			j = I_sorted_ind[i]
 			J.append(I_c[j])
-			MRC_model = add_var(MRC_model, M, tau_, lambda_, I_c[j])
+			MRC_model = add_var(MRC_model, F, tau_, lambda_, I_c[j])
 			k = k + 1
 
 	return MRC_model, J
 
-def add_var(MRC_model, M, tau_, lambda_, col_ind):
-	N_constr = M.shape[0]
+def add_var(MRC_model, F, tau_, lambda_, col_ind):
+	"""
+	Function to add new variable to the MRC GUROBI LP model
+
+	Parameters:
+	-----------
+	MRC_model : A MOSEK model object
+		MRC model to be updated.
+
+	F : `array`-like
+		A vector of coefficients to update the constraint matrix.
+
+	tau_ : `array`-like of shape (no_of_features)
+		Mean estimates.
+
+	lambda_ : `array`-like of shape (no_of_features)
+		Standard deviation of the estimates.
+
+	col_ind : `int`
+		Variable index to be added
+
+	Returns:
+	--------
+	MRC_model : A MOSEK model
+		Updated MRC model object.
+
+	"""
+	N_constr = F.shape[0]
 
 	# Add to the gurobi model
 	mu_plus_i = MRC_model.addVar(obj=(((-1) * (tau_ - lambda_)))[col_ind],
-								   column=gp.Column((-1) * M[:, col_ind],
+								   column=gp.Column((-1) * F[:, col_ind],
 													[MRC_model.getConstrByName("constr_" + str(j)) for j in range(N_constr)]),
 								   name='mu_+_' + str(col_ind))
 	mu_plus_i.PStart = 0
 
 	mu_minus_i = MRC_model.addVar(obj=(tau_ + lambda_)[col_ind],
-									column=gp.Column(M[:, col_ind],
+									column=gp.Column(F[:, col_ind],
 													 [MRC_model.getConstrByName("constr_" + str(j)) for j in range(N_constr)]),
 									name='mu_-_' + str(col_ind))
 	mu_minus_i.PStart = 0

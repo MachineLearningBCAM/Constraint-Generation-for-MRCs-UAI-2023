@@ -2,16 +2,16 @@ import numpy as np
 from mrc_lp_gurobi import mrc_lp_model_gurobi
 from cg_utils import select
 
-def alg1(M, c, tau_, lambda_, I, n_max=100, k_max=20, warm_start=None, nu_init=None, eps=1e-4):
+def alg1(F, b, tau_, lambda_, I, n_max=100, k_max=20, warm_start=None, nu_init=None, eps=1e-4):
 	"""
 	Constraint generation algorithm for Minimax Risk Classifiers.
 
 	Parameters:
 	-----------
-	M : `array`-like of shape (no_of_constraints, 2*(no_of_feature+1))
+	F : `array`-like of shape (no_of_constraints, 2*(no_of_feature+1))
 		Constraint matrix.
 
-	c : `array`-like of shape (no_of_constraints)
+	b : `array`-like of shape (no_of_constraints)
 		Right handside of the constraints.
 
 	tau_ : `array`-like of shape (no_of_features)
@@ -65,7 +65,7 @@ def alg1(M, c, tau_, lambda_, I, n_max=100, k_max=20, warm_start=None, nu_init=N
 	print('MRC-CG with n_max = ' + str(n_max) + ', k_max = ' + str(k_max) + ', epsilon = ' + str(eps))
 	R_k = []
 
-	N_constr = M.shape[0]
+	N_constr = F.shape[0]
 
 	# Column selection array
 	if type(I) != list:
@@ -74,8 +74,8 @@ def alg1(M, c, tau_, lambda_, I, n_max=100, k_max=20, warm_start=None, nu_init=N
 	# Initial optimization
 	mu = np.zeros(tau_.shape[0])
 
-	MRC_model = mrc_lp_model_gurobi(M,
-							 		c,
+	MRC_model = mrc_lp_model_gurobi(F,
+							 		b,
 							 		tau_,
 							 		lambda_,
 							 		I,
@@ -96,7 +96,7 @@ def alg1(M, c, tau_, lambda_, I, n_max=100, k_max=20, warm_start=None, nu_init=N
 
 	# Add the columns to the model.
 	MRC_model, J = select(MRC_model,
-						  M,
+						  F,
 						  tau_ ,
 						  lambda_ ,
 						  I,
@@ -116,7 +116,7 @@ def alg1(M, c, tau_, lambda_, I, n_max=100, k_max=20, warm_start=None, nu_init=N
 
 		# Select the columns/features for the next iteration.
 		I = J.copy()
-		MRC_model, J = select(MRC_model, M, tau_, lambda_, I, alpha, eps, n_max)
+		MRC_model, J = select(MRC_model, F, tau_, lambda_, I, alpha, eps, n_max)
 
 		k = k + 1
 

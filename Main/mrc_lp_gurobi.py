@@ -3,14 +3,14 @@ from gurobipy import GRB
 import numpy as np
 import random
 
-def mrc_lp_model_gurobi(M, b, tau_, lambda_, index_columns=None, nu_init=None, warm_start=None):
+def mrc_lp_model_gurobi(F, b, tau_, lambda_, index_columns=None, nu_init=None, warm_start=None):
 	"""
 	Function to build and return the linear model of MRC 0-1 loss using the given
 	constraint matrix and objective vector.
 
 	Parameters:
 	-----------
-	M : array-like of shape (no_of_constraints, 2*(no_of_feature+1))
+	F : array-like of shape (no_of_constraints, 2*(no_of_feature+1))
 		Constraint matrix.
 
 	b : array-like of shape (no_of_constraints)
@@ -28,7 +28,7 @@ def mrc_lp_model_gurobi(M, b, tau_, lambda_, index_columns=None, nu_init=None, w
 	"""
 
 	if index_columns is None:
-		index_columns = np.arange(M.shape[1])
+		index_columns = np.arange(F.shape[1])
 
 	# Define the MRC 0-1 linear model (primal).
 	MRC_model = gp.Model("MRC_0_1_primal")
@@ -74,8 +74,8 @@ def mrc_lp_model_gurobi(M, b, tau_, lambda_, index_columns=None, nu_init=None, w
 	mu_minus = np.asarray(mu_minus)
 
 	# Define all the constraints.
-	for i in range(M.shape[0]):
-		MRC_model.addConstr(M[i, index_columns] @ (mu_minus - mu_plus) -
+	for i in range(F.shape[0]):
+		MRC_model.addConstr(F[i, index_columns] @ (mu_minus - mu_plus) -
 							nu_pos + nu_neg >= b[i], "constr_" + str(i))
 
 

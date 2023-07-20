@@ -158,7 +158,7 @@ def fo_optimization_mrc(F, b, tau_, lambda_, max_iters):
 
 	return new_params_
 
-def fo_init(M, c, tau_, lambda_):
+def fo_init(F, b, tau_, lambda_):
 
 	"""
 		Generate the initial set of features for MRC_CG using the MRCpy library's
@@ -166,10 +166,10 @@ def fo_init(M, c, tau_, lambda_):
 
 	Parameters:
 	-----------
-	M : `array`-like of shape (no_of_constraints, 2*(no_of_feature+1))
+	F : `array`-like of shape (no_of_constraints, 2*(no_of_feature+1))
 		Constraint matrix.
 
-	c : `array`-like of shape (no_of_constraints)
+	b : `array`-like of shape (no_of_constraints)
 		Right handside of the constraints.
 
 	tau_ : `array`-like of shape (no_of_features)
@@ -194,20 +194,20 @@ def fo_init(M, c, tau_, lambda_):
 	# Reduce the feature space by restricting the number of features 10*N
 	# based on the variance in the features, that is, picking features first 
 	# 10*N minimum variance features.
-	N 				= M.shape[0]
+	N 				= F.shape[0]
 	argsort_columns = np.argsort(np.abs(lambda_))
 	index_CG        = argsort_columns[:10*N]
 
 	# Solve the optimization using the reduced training set
 	# and first order subgradient methods to get an
 	# initial low accuracy solution in minimum time.
-	M_reduced = M[:, index_CG]
-	M_reduced_t = M_reduced.transpose()
+	F_reduced = F[:, index_CG]
+	F_reduced_t = F_reduced.transpose()
 
 	# Calculate the upper bound
 	upper_params_ = \
-			 fo_optimization_mrc(M_reduced,
-								 c,
+			 fo_optimization_mrc(F_reduced,
+								 b,
 								 tau_[index_CG],
 								 lambda_[index_CG],
 								 100)

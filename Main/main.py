@@ -7,6 +7,8 @@ import scipy.special as scs
 
 def mrc_cg(X, y, phi_ob, s, n_max, k_max, eps):
 	"""
+	Efficient learning of 0-1 MRCs.
+
 	Parameters
     ----------
     X : `array`-like of shape (`n_samples`, `n_features`)
@@ -79,7 +81,7 @@ def mrc_cg(X, y, phi_ob, s, n_max, k_max, eps):
 	tau_ = phi_ob.est_exp(X, y)
 	lambda_ = s * (phi_ob.est_std(X, y)) / np.sqrt(X.shape[0])
 
-	F = np.vstack((np.sum(phi_[:, S, ], axis=1)
+	F_ = np.vstack((np.sum(phi_[:, S, ], axis=1)
 				   for numVals in range(1, phi_ob.n_classes + 1)
 				   for S in it.combinations(np.arange(phi_ob.n_classes), numVals)))
 
@@ -88,10 +90,10 @@ def mrc_cg(X, y, phi_ob, s, n_max, k_max, eps):
 						for numVals in np.arange(1, phi_ob.n_classes + 1)])
 
 	# Constraint coefficient matrix
-	M = F / (cardS[:, np.newaxis])
+	F = F_ / (cardS[:, np.newaxis])
 
 	# The bounds on the constraints
-	c = 1 - (1 / cardS)
+	b = 1 - (1 / cardS)
 
 	# Calculate the time
 	# Total time taken.
@@ -100,15 +102,15 @@ def mrc_cg(X, y, phi_ob, s, n_max, k_max, eps):
 	initTime = time.time()
 
 	#-> Initialization.
-	I, warm_start, nu_init = fo_init(M,
-									 c,
+	I, warm_start, nu_init = fo_init(F,
+									 b,
 									 tau_,
 									 lambda_)
 	initTime = time.time() - initTime
 
 	#-> Run the CG code.
-	mu, nu, R, I, R_k = alg1(M,
-							 c,
+	mu, nu, R, I, R_k = alg1(F,
+							 b,
 							 tau_,
 							 lambda_,
 							 I,
