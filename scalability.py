@@ -44,7 +44,7 @@ if __name__ == '__main__':
     one_hot = False
     fit_intercept = False
 
-    n_feats = np.asarray([20000, 25000])
+    n_feats = np.asarray([100, 500, 1000, 5000, 10000, 15000, 20000, 25000])
 
     # Loading the dataset
     load_dataset = 'load_' + dataset_name
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     n_classes = len(np.unique(y))
 
     # For 20 random split
-    n_seeds = 5
+    n_seeds = 50
 
     use_mrc_cg = True
     use_svm_cg = True
@@ -116,16 +116,19 @@ if __name__ == '__main__':
 
         #--> SVM-CG (Constraint generation for SVMs)
             if use_svm_cg:
+                y1 = y.copy()
+                y1[y == 0] = -1
+                y1[y == 1] = 1
                 initTime = time.time()
                 lam_max = np.max(np.sum( np.abs(phi_ob.transform(X)), axis=0))
                 lam = 0.01*lam_max
-                obj, _, _, beta, beta0, support = use_FOM_CG(phi_ob.transform(X), y, lam=lam, tau_max=0.1, tol=eps)
+                obj, _, _, beta, beta0, support = use_FOM_CG(phi_ob.transform(X), y1, lam=lam, tau_max=0.1, tol=eps)
                 svm_cg_time = time.time() - initTime
 
                 avg_svm_cg_time = avg_svm_cg_time + svm_cg_time
 
         #--> MRC-LP (Solving the LP formulation of MRCs using GUROBI optimizer)
-            if use_mrc_lp:
+            if use_mrc_lp and k<5000:
                 tau_ = phi_ob.est_exp(X, y)
                 lambda_ = s * (phi_ob.est_std(X, y)) / np.sqrt(X.shape[0])
 
@@ -176,7 +179,7 @@ if __name__ == '__main__':
             svm_cg_time_arr[j] = avg_svm_cg_time
             print('Average time taken by SVM-CG : ', avg_svm_cg_time)
 
-        if use_mrc_lp:
+        if use_mrc_lp and k<5000:
             avg_mrc_lp_time = avg_mrc_lp_time / seed_i
             mrc_lp_time_arr[j] = avg_mrc_lp_time
             print('Average time taken by MRC-LP : ', avg_mrc_lp_time)

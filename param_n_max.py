@@ -9,7 +9,6 @@ import warnings
 import time
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from MRCpy import MRC
 import itertools as it
 import scipy.special as scs
 
@@ -60,7 +59,7 @@ if __name__ == '__main__':
 	save = True
 
 	X = StandardScaler().fit_transform(X, y)
-	n_max_arr = [1, 25, 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1500, d]
+	n_max_arr = [1, 10, 15, 25, 40, 50, 63, 100, 200, 300, 400, 500, 600, 800, 1000, 1585, d]
 	time_arr = np.zeros(len(n_max_arr))
 
 	n_reps = 50
@@ -75,8 +74,8 @@ if __name__ == '__main__':
 
 		#--> Time taken by MRC-LP to solve the optimization.
 			if n_max == d:
+				n = X_train.shape[0]
 				phi_ = phi_ob.eval_x(X_train)
-				phi_ = np.unique(phi_, axis=0)
 				tau_ = phi_ob.est_exp(X, y)
 				lambda_ = s * (phi_ob.est_std(X, y)) / np.sqrt(X.shape[0])
 
@@ -102,8 +101,8 @@ if __name__ == '__main__':
 			else:
 
 		#--> Time taken by MRC-CG to solve the optimization.
-				mu, nu, R, I, R_k, total_time, init_mrc_cg_time = mrc_cg(X,
-																		 y,
+				mu, nu, R, I, R_k, total_time, init_mrc_cg_time = mrc_cg(X_train,
+																		 y_train,
 																		 phi_ob,
 																		 s,
 																		 n_max,
@@ -115,8 +114,7 @@ if __name__ == '__main__':
 	# Calculate the relative time defined as
 	# the time taken by mrc-cg divided by
 	# the time taken to solve the mrc-lp problem.
-	rel_time_arr = time_arr[0:a.shape[0]-1] / time_arr[-1]
-	print('###### The n_max_arr used is : ', n_max_arr)
+	rel_time_arr = time_arr / time_arr[-1]
 	print('###### The relative times are as follows : \n', rel_time_arr)
 
 	# Save the data
