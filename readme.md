@@ -1,10 +1,14 @@
 
 # Efficient Learning of Minimax Risk Classifiers in High Dimensions
-![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg) [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](#support-and-author)
+![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg) [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](#support-and-authors)
 
 This repository is the official implementation of [Efficient Learning of Minimax Risk Classifiers in High Dimensions](http://arxiv.org/abs/2306.06649). 
 
 The algorithm proposed in the paper provides efficient learning for 0-1 minimax risk classifiers (MRCs) in high dimensions based on constraint generation. In particular, the iterative algorithm utilizes greedy feature selection to obtain a sequence of MRCs with decreasing worst-case error probability. Such performance assessment at learning provides a trade-off between training time and approximation error.
+
+### Decreasing worst-case errors
+
+<img src="decreasing_worst_case_error.eps" width="500" height="500"/>
 
 ## Requirements
 
@@ -78,11 +82,11 @@ The proposed algorithm is also implemented in the MRCpy library which can be ins
 ```
 from MRCpy import MRC
 
-mrc_classif = MRC(loss = '0-1,
-				  solver = 'cg',
-				  n_max = 100,
-				  k_max = 20,
-				  eps = 1e-4).fit(X,y)
+mrc_classif = MRC(loss = '0-1, 
+solver = 'cg',
+n_max = 100,
+k_max = 20,
+eps = 1e-4).fit(X,y)
 ```
 
 For further details, please check out the documentation of the library in [here](https://machinelearningbcam.github.io/MRCpy/)
@@ -97,7 +101,7 @@ Santiago Mazuelas
 
 smazuelas@bcamath.org
 
-Aritz P\'{e}rez
+Aritz Pérez
 
 aperez@bcamath.org
 
@@ -105,8 +109,9 @@ aperez@bcamath.org
 
 If you find useful the code in your research, please include explicit mention of our work in your publication with the following corresponding entry in your bibliography:
 
-[1] K. Bondugula, S. Mazuelas, A. P\'{e}rez "Efficient Learning of Minimax Risk Classifiers in High Dimensions." The 39th Conference on Uncertainty in Artificial Intelligence. PMLR, 2023.
+[1] K. Bondugula, S. Mazuelas, A. Pérez "Efficient Learning of Minimax Risk Classifiers in High Dimensions." The 39th Conference on Uncertainty in Artificial Intelligence. PMLR, 2023.
 
 The corresponding BiBTeX citation is given below:
 
-@InProceedings{AlvMazLoz22, title = {Efficient Learning of Minimax Risk Classifiers in High Dimensions}, author = Bondugula, Kartheek and Mazuelas, Santiago and P\'{e}rez, Aritz}, booktitle = {The 39th Conference on Uncertainty in Artificial Intelligence}, year = {2023}}
+@InProceedings{BonMazPer23, title = {Efficient Learning of Minimax Risk Classifiers in High Dimensions}, author = {Bondugula, Kartheek and Mazuelas, Santiago and P\'{e}rez, Aritz}, booktitle = {The 39th Conference on Uncertainty in Artificial Intelligence}, pages = {206--215}, year = {2023}, volume = {216}, series = {Proceedings of Machine Learning Research}, publisher = {PMLR}}
+
