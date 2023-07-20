@@ -72,7 +72,7 @@ def predict_proba(phi_te, mu, nu, n_classes):
 
 if __name__ == '__main__':
 
-	# Get the command line arguments.
+		# Get the command line arguments.
 	warnings.simplefilter("ignore")
 	path = "./Results/Comparison with state of the art/"
 	dataset_name = sys.argv[1]
@@ -95,6 +95,7 @@ if __name__ == '__main__':
 	fit_intercept = True
 
 	print('Dataset ' + str(dataset_name) + ' loaded. The dimensions are : ' + str(n) + ', ' + str(d))
+	print('The number of classes are : ', n_classes)
 
 	use_mrc_cg = True
 	use_svm_cg = True
@@ -223,6 +224,8 @@ if __name__ == '__main__':
 		avg_error_mrc_cg = np.asarray([np.average(mrc_cg_error_arr),
 									  np.std(mrc_cg_error_arr)])
 
+		print('Average error for MRC-CG : \t' + str(avg_error_mrc_cg[0]) \
+													+ ' +/- ' + str(avg_error_mrc_cg[1]))
 		# Time
 		print('Average time taken by MRC_CG : \t' + str(avg_time_mrc_cg[0]) \
 											    + ' +/- ' + str(avg_time_mrc_cg[1]))

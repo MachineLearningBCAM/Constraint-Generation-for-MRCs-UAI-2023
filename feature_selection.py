@@ -12,10 +12,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import tree
 from sklearn.feature_selection import RFE
 from sklearn.model_selection import StratifiedKFold
+from sklearn.feature_selection import mutual_info_classif
 from sklearn.svm import LinearSVC
+from sklearn.feature_selection import f_classif
 import numpy as np
+import pandas as pd
 import random
-from MRCpy import MRC
+# from PyImpetus import PPIMBC
+from mrmr import mrmr_classif
 
 sys.path.append('./Main/')
 from main import mrc_cg
@@ -33,6 +37,10 @@ sys.path.append('./')
 sys.path.append('./Libraries/L1SVM_CG/')
 from Our_methods import *
 from Benchmarks import *
+sys.path.append('./')
+
+sys.path.append('./Libraries/CCM/')
+import ccm
 sys.path.append('./')
 
 import random
@@ -76,6 +84,8 @@ if __name__ == '__main__':
 	warnings.simplefilter("ignore")
 	path = "./Results/Feature selection/"
 	dataset_name = sys.argv[1]
+	datasets = ["Arcene", "Colon", "GLI_85", "Leukemia", "Ovarian", "Prostate_GE", "SMK_CAN_187"]
+
 	eps = 1e-4
 	s = 1
 	n_max = 100
@@ -94,12 +104,18 @@ if __name__ == '__main__':
 	use_mrc_cg = True
 	use_svm_cg = True
 	use_rfe = True
+	use_mrmr = True
+	use_annova = True
+
+	# use_
 
 	seed = 42
 
 	mrc_cg_time_arr = []
 	svm_cg_time_arr = []
 	rfe_time_arr = []
+	mrmr_time_arr = []
+	annova_time_arr = []
 
 	# Errors
 	lr_mrc_cg_error_arr = []
@@ -108,6 +124,10 @@ if __name__ == '__main__':
 	dt_svm_cg_error_arr = []
 	lr_rfe_error_arr = []
 	dt_rfe_error_arr = []
+	lr_mrmr_error_arr = []
+	dt_mrmr_error_arr = []
+	lr_annova_error_arr = []
+	dt_annova_error_arr = []
 
 	# Feature arrays 
 	n_feats_mrc_cg = []
@@ -221,6 +241,56 @@ if __name__ == '__main__':
 			lr_rfe_error_arr.append(lr_rfe_error)
 			dt_rfe_error_arr.append(dt_rfe_error)
 
+#---> Minimum redundancy maximum relevance
+		if use_mrmr:
+			print('Using minimum redundancy maximum relevance')
+			initTime = time.time()
+			y_train1 = y_train.copy()
+			y_test1 = y_test.copy()
+			y_train1[y_train1 == 0] = -1
+			y_train1[y_train1 == 1] = 1
+			y_test1[y_test1 == 0] = -1
+			y_test1[y_test1 == 1] = 1
+			pd_x_train = pd.DataFrame(X_train)
+			pd_y_train = pd.DataFrame(y_train1)
+			selected_feats = mrmr_classif(X=pd_x_train, y=pd_y_train, K=len(I))
+			mrmr_time = time.time() - initTime
+			lr_est = LogisticRegression(random_state=seed, penalty='none').fit(X_train[:, selected_feats], y_train)
+			y_pred = lr_est.predict(X_test[:, selected_feats])
+			lr_mrmr_error = np.average(y_test != y_pred)
+			dt_clf = tree.DecisionTreeClassifier(random_state=seed).fit(X_train[:, selected_feats], y_train)
+			y_pred = dt_clf.predict(X_test[:, selected_feats])
+			dt_mrmr_error = np.average(y_test != y_pred)
+
+			# Add the data to the array to be averaged
+			mrmr_time_arr.append(mrmr_time)
+			lr_mrmr_error_arr.append(lr_mrmr_error)
+			dt_mrmr_error_arr.append(dt_mrmr_error)
+
+		if use_annova:
+			print('Using ANNOVA ')
+			initTime = time.time()
+			y_train1 = y_train.copy()
+			y_test1 = y_test.copy()
+			y_train1[y_train1 == 0] = -1
+			y_train1[y_train1 == 1] = 1
+			y_test1[y_test1 == 0] = -1
+			y_test1[y_test1 == 1] = 1
+			f_score, p_score = f_classif(X=X_train, y=y_train1)
+			selected_feats = (np.argsort(f_score)[::-1])[:len(I)]
+			annova_time = time.time() - initTime
+			lr_est = LogisticRegression(random_state=seed, penalty='none').fit(X_train[:, selected_feats], y_train)
+			y_pred = lr_est.predict(X_test[:, selected_feats])
+			lr_annova_error = np.average(y_test != y_pred)
+			dt_clf = tree.DecisionTreeClassifier(random_state=seed).fit(X_train[:, selected_feats], y_train)
+			y_pred = dt_clf.predict(X_test[:, selected_feats])
+			dt_annova_error = np.average(y_test != y_pred)
+
+			# Add the data to the array to be averaged
+			annova_time_arr.append(annova_time)
+			lr_annova_error_arr.append(lr_annova_error)
+			dt_annova_error_arr.append(dt_annova_error)
+
 		i = i + 1
 
 
@@ -318,6 +388,60 @@ if __name__ == '__main__':
 													+ ' +/- ' + str(avg_error_dt[1]))
 		np.savetxt(path + str(dataset_name) + '/dt_rfe_error.csv', avg_error_dt, delimiter=",", fmt='%s')
 
-		print('Note that the number of features selected by RFE is equal to the number of features selected by SVM-CG')
+		print('Note that the number of features selected by RFE is equal to the number of features selected by MRC-CG')
+
+	if use_mrmr:
+		avg_time_mrmr = np.asarray([np.average(mrmr_time_arr),
+									  np.std(mrmr_time_arr)])
+
+		avg_error_lr = np.asarray([np.average(lr_mrmr_error_arr),
+									  np.std(lr_mrmr_error_arr)])
+
+		avg_error_dt = np.asarray([np.average(dt_mrmr_error_arr),
+								   np.std(dt_mrmr_error_arr)])
+
+		# Time
+		print('Average time taken by MRMR : \t' + str(avg_time_mrmr[0]) \
+											    + ' +/- ' + str(avg_time_mrmr[1]))
+		np.savetxt(path + str(dataset_name) + '/mrmr_time.csv', avg_time_mrmr, delimiter=",", fmt='%s')
+
+		# LR error
+		print('Average error for LR classifier using MRMR features : \t' + str(avg_error_lr[0]) \
+													+ ' +/- ' + str(avg_error_lr[1]))
+		np.savetxt(path + str(dataset_name) + '/lr_mrmr_error.csv', avg_error_lr, delimiter=",", fmt='%s')
+
+		# DT error
+		print('Average error for DT classifier using MRMR features : \t' + str(avg_error_dt[0]) \
+													+ ' +/- ' + str(avg_error_dt[1]))
+		np.savetxt(path + str(dataset_name) + '/dt_mrmr_error.csv', avg_error_dt, delimiter=",", fmt='%s')
+
+		print('Note that the number of features selected by MRMR is equal to the number of features selected by MRC-CG')
+
+	if use_annova:
+		avg_time_annova = np.asarray([np.average(annova_time_arr),
+									  np.std(annova_time_arr)])
+
+		avg_error_lr = np.asarray([np.average(lr_annova_error_arr),
+									  np.std(lr_annova_error_arr)])
+
+		avg_error_dt = np.asarray([np.average(dt_annova_error_arr),
+								   np.std(dt_annova_error_arr)])
+
+		# Time
+		print('Average time taken by ANNOVA : \t' + str(avg_time_annova[0]) \
+											    + ' +/- ' + str(avg_time_annova[1]))
+		np.savetxt(path + str(dataset_name) + '/annova_time.csv', avg_time_annova, delimiter=",", fmt='%s')
+
+		# LR error
+		print('Average error for LR classifier using ANNOVA features : \t' + str(avg_error_lr[0]) \
+													+ ' +/- ' + str(avg_error_lr[1]))
+		np.savetxt(path + str(dataset_name) + '/lr_annova_error.csv', avg_error_lr, delimiter=",", fmt='%s')
+
+		# DT error
+		print('Average error for DT classifier using ANNOVA features : \t' + str(avg_error_dt[0]) \
+													+ ' +/- ' + str(avg_error_dt[1]))
+		np.savetxt(path + str(dataset_name) + '/dt_annova_error.csv', avg_error_dt, delimiter=",", fmt='%s')
+
+		print('Note that the number of features selected by ANNOVA is equal to the number of features selected by MRC-CG')
 
 	print('Data saved successfully in ', path + str(dataset_name))
